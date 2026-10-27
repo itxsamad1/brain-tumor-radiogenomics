@@ -16,6 +16,7 @@ dependencies = [
   "rich>=13.0",
   "matplotlib>=3.8",
   "seaborn>=0.13",
+  "h5py>=3.16.0",
 ]
 
 [project.optional-dependencies]

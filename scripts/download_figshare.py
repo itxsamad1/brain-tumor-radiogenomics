@@ -31,7 +31,7 @@ def main() -> int:
         print(f"Already present: {dest}")
         return 0
 
-    print(f"Downloading Figshare article 1512427 → {dest}")
+    print(f"Downloading Figshare article 1512427 -> {dest}")
     print("If this fails, download manually from https://doi.org/10.6084/m9.figshare.1512427")
     try:
         urllib.request.urlretrieve(FIGSHARE_DOWNLOAD, dest)

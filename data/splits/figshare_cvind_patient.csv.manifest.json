@@ -1,0 +1,7 @@
+{
+  "sha256": "d85a3751fd1926de778dbd2fce9fb7c18262aaa901846a4c83fb452a4e14aa46",
+  "n_rows": 3064,
+  "dataset": "figshare",
+  "scheme": "cvind_patient_majority",
+  "n_patients": 233
+}
