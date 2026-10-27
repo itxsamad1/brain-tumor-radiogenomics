@@ -1,0 +1,16 @@
+fold,class_name,slices,patients
+1,glioma,245,17
+1,meningioma,112,16
+1,pituitary,185,12
+2,glioma,338,18
+2,meningioma,167,16
+2,pituitary,174,12
+3,glioma,231,18
+3,meningioma,139,17
+3,pituitary,202,13
+4,glioma,325,18
+4,meningioma,124,17
+4,pituitary,179,12
+5,glioma,287,18
+5,meningioma,166,16
+5,pituitary,190,13

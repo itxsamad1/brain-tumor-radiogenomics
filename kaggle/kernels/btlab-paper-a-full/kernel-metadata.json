@@ -1,0 +1,18 @@
+{
+  "id": "itxsamad/btlab-paper-a-full",
+  "title": "btlab-paper-a-full",
+  "code_file": "btlab-paper-a-full.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "itxsamad/btlab-figshare-paper-a",
+    "itxsamad/btlab-paper-a-ckpts"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

@@ -6,6 +6,10 @@ Leakage-free, trustworthy MRI-based glioma radiogenomics research codebase.
 
 > This is **not** a tumor-vs-no-tumor Kaggle CNN project. We use clinical-grade public cohorts (BraTS, UCSF-PDGM, UPenn-GBM, UTSW-Glioma) and modern evaluation standards.
 
+## Paper & publish plan
+
+See **[`docs/PAPER_PUBLISH_PLAN.md`](docs/PAPER_PUBLISH_PLAN.md)** for the full English plan: paper portfolio (A–D), datasets, metrics, figures, Kaggle workflow, and what “publish-ready” means.
+
 ## Papers (planned)
 
 | ID | Topic | Primary data |
