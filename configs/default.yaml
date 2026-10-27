@@ -1,0 +1,23 @@
+project:
+  name: brain-tumor-radiogenomics
+  seed: 42
+
+paths:
+  raw: data/raw
+  registry: data/registry
+  splits: data/splits
+  cache: data/cache
+  experiments: experiments
+
+training:
+  # Designed for Kaggle 12h sessions — always resume from last checkpoint
+  max_epochs: 100
+  checkpoint_every_epochs: 1
+  batch_size: 2
+  num_workers: 2
+  amp: true
+
+splits:
+  scheme: patient_level
+  n_folds: 5
+  stratify_by: [idh, who_grade]

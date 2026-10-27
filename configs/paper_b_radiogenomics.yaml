@@ -1,0 +1,16 @@
+paper: B
+task: radiogenomics_multitask
+development: ucsf_pdgm
+external:
+  primary: utsw_glioma
+  secondary: [tcga, upenn_gbm]
+targets:
+  primary: idh
+  secondary: [codel_given_idh, who_type, who_grade]
+  exploratory: [mgmt]
+input:
+  modalities: [t1, t1c, t2, flair]
+  crop_size: [128, 128, 128]
+  dtype: float16
+overlap:
+  exclude_brats2021_mapped: true

@@ -1,0 +1,13 @@
+paper: A
+task: tumor_type_2d
+dataset: figshare_juncheng
+splits:
+  scheme: patient_level  # never slice-random for primary results
+models:
+  - resnet18
+  - resnet50
+  - efficientnet_b0
+audits:
+  - near_duplicate
+  - imaging_plane_shortcut
+  - tumor_masked
