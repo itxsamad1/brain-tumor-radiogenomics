@@ -42,7 +42,7 @@ def main() -> None:
 
     data_root = find_data_root()
     splits = data_root / "splits.csv"
-    folds = [int(x) for x in os.environ.get("FOLDS", "2,3,4,5").split(",") if x.strip()]
+    folds = [int(x) for x in os.environ.get("FOLDS", "3,4,5").split(",") if x.strip()]
     model = os.environ.get("MODEL", "resnet18")
     epochs = int(os.environ.get("EPOCHS", "30"))
 

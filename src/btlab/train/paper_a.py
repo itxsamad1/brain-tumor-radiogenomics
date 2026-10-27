@@ -217,7 +217,9 @@ def train(args: argparse.Namespace) -> None:
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    search = [out_dir, Path("/kaggle/input"), Path("/kaggle/working")]
+    # Only search this run's out_dir (+ optional resume-from).
+    # Do NOT scan all of /kaggle/working — that would pick up other folds' checkpoints.
+    search = [out_dir]
     if args.resume_from:
         search.insert(0, Path(args.resume_from))
     ckpt_path = find_latest_checkpoint(search)
