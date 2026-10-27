@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "kaggle_upload" / "paper_a_ckpt_staging"
 CKPT_DS = ROOT / "kaggle" / "datasets" / "btlab-paper-a-ckpts"
-KERNEL = "itxsamad/btlab-paper-a-train"
+KERNEL = "itxsamad/btlab-paper-a-train"  # primary; older slug: btlab-paper-a-train-resumable
 
 
 def main() -> int:
