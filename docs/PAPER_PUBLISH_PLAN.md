@@ -276,10 +276,10 @@ Exact venue chosen after results exist — do not lock a journal before metrics 
 ## 13. Immediate next actions (execution order)
 
 1. **Write/maintain this plan** (done in this file).  
-2. **Complete Paper A package:** full eval + figures + 5-fold + audits + `experiments/paper_a/REPORT.md`.  
-3. Start TCIA downloads (UTSW first, then UCSF/UPenn/BraTS) for Papers B–D.  
-4. Implement Paper B baselines on CPU while Kaggle runs 3D jobs.  
-5. Lock analysis plan → single external evaluation → write flagship paper.
+2. **Complete Paper A package:** full eval + figures + 5-fold + audits + `experiments/paper_a/REPORT.md`. ✅  
+3. **Paper B started:** UTSW official metadata ingested; age/sex LR baseline; Kaggle 2.5D IDH kernel on UTSW-2D mirror.  
+4. Official Aspera pull of full UTSW NIfTI (~23 GB) + UCSF-PDGM for development cohort.  
+5. Radiomics + 3D/multi-task models on Kaggle; lock analysis plan → single external eval.
 
 ---
 

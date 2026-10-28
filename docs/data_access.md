@@ -51,3 +51,15 @@ Upload only:
 - overlap exclusion lists  
 
 See `scripts/package_kaggle_dataset.py`.
+
+## Paper B quick-start (GPU)
+
+1. Official metadata (no Aspera):  
+   `https://www.cancerimagingarchive.net/wp-content/uploads/UTSW_Glioma_Metadata-2-1.tsv`  
+   → `data/raw/utsw-glioma/UTSW_Glioma_Metadata.tsv`
+2. `uv run python scripts/paper_b_prepare_utsw.py`  
+3. `uv run python scripts/paper_b_age_baseline.py`  
+4. Kaggle kernel `itxsamad/btlab-paper-b-idh` uses public 2D PNG mirror  
+   `suvadipchakraborty/utsw-glioma-2d-mri-dataset` + `itxsamad/btlab-paper-b-splits`  
+   (cite original TCIA DOI; replace with official Aspera NIfTI when local sync finishes).
+5. Full NIfTI (~22.9 GB) requires [IBM Aspera Connect](https://www.ibm.com/products/aspera/downloads) via the TCIA Faspex link on the collection page.

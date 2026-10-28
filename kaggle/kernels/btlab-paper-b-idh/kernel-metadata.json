@@ -1,0 +1,18 @@
+{
+  "id": "itxsamad/btlab-paper-b-idh",
+  "title": "btlab-paper-b-idh",
+  "code_file": "btlab-paper-b-idh.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "suvadipchakraborty/utsw-glioma-2d-mri-dataset",
+    "itxsamad/btlab-paper-b-splits"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

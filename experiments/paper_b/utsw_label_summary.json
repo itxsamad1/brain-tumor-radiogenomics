@@ -1,0 +1,31 @@
+{
+  "n_patients": 625,
+  "n_idh_labeled": 622,
+  "idh_mutant": 176,
+  "idh_wildtype": 446,
+  "codel_among_idhmut": 140,
+  "folds": {
+    "1": {
+      "n": 125,
+      "idh_mut_frac": 0.28
+    },
+    "2": {
+      "n": 125,
+      "idh_mut_frac": 0.288
+    },
+    "3": {
+      "n": 124,
+      "idh_mut_frac": 0.28225806451612906
+    },
+    "4": {
+      "n": 124,
+      "idh_mut_frac": 0.28225806451612906
+    },
+    "5": {
+      "n": 124,
+      "idh_mut_frac": 0.28225806451612906
+    }
+  },
+  "source_doi": "10.7937/DFAE-1B86",
+  "seed": 42
+}
