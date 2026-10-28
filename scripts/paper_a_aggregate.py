@@ -46,8 +46,21 @@ def main() -> int:
                 })
                 break
 
-    leaky = load_metrics(root / "leaky_slice_split" / "status.json")
-    if leaky and "best_f1" in leaky:
+    leaky_metrics = load_metrics(root / "leaky_slice_split" / "metrics.json")
+    leaky = load_metrics(root / "leaky_slice_split" / "status.json") or {}
+    if leaky_metrics:
+        rows.append({
+            "fold": 0,
+            "model": "resnet18",
+            "protocol": "slice_level_leaky",
+            "accuracy": leaky_metrics.get("accuracy"),
+            "macro_f1": leaky_metrics["macro_f1"],
+            "balanced_accuracy": leaky_metrics.get("balanced_accuracy"),
+            "auroc_macro_ovr": leaky_metrics.get("auroc_macro_ovr"),
+            "ece": leaky_metrics.get("ece"),
+            "source": str(root / "leaky_slice_split" / "metrics.json"),
+        })
+    elif leaky and "best_f1" in leaky:
         rows.append({
             "fold": 0,
             "model": "resnet18",
@@ -74,9 +87,24 @@ def main() -> int:
             "accuracy_mean": float(patient["accuracy"].mean()),
             "accuracy_std": float(patient["accuracy"].std(ddof=0)) if len(patient) > 1 else 0.0,
         }
-    if leaky and "best_f1" in leaky:
-        summary["slice_level_leaky_best_macro_f1"] = leaky["best_f1"]
-        summary["leakage_stats"] = leaky.get("leakage_stats")
+    if leaky_metrics:
+        summary["slice_level_leaky_macro_f1"] = leaky_metrics["macro_f1"]
+        summary["slice_level_leaky_accuracy"] = leaky_metrics.get("accuracy")
+    elif leaky and "best_f1" in leaky:
+        summary["slice_level_leaky_macro_f1"] = leaky["best_f1"]
+    leak_stats = load_metrics(root / "leaky_slice_split" / "leakage_stats.json")
+    if leak_stats:
+        summary["leakage_stats"] = leak_stats
+    elif leaky.get("leakage_stats"):
+        summary["leakage_stats"] = leaky["leakage_stats"]
+
+    masked = load_metrics(root / "tumor_masked" / "eval_masked_metrics.json")
+    if masked:
+        summary["tumor_masked_eval_macro_f1"] = masked.get("macro_f1")
+        summary["tumor_masked_eval_accuracy"] = masked.get("accuracy")
+    masked_train = load_metrics(root / "tumor_masked" / "train_masked_metrics.json")
+    if masked_train:
+        summary["tumor_masked_train_best_macro_f1"] = masked_train.get("best_macro_f1")
 
     (root / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
@@ -85,14 +113,17 @@ def main() -> int:
     if summary.get("patient_level_resnet18"):
         labels.append("patient-level\n(mean folds)")
         means.append(summary["patient_level_resnet18"]["macro_f1_mean"])
-    if "slice_level_leaky_best_macro_f1" in summary:
+    if "slice_level_leaky_macro_f1" in summary:
         labels.append("slice-level\n(leaky)")
-        means.append(summary["slice_level_leaky_best_macro_f1"])
+        means.append(summary["slice_level_leaky_macro_f1"])
+    if "tumor_masked_eval_macro_f1" in summary:
+        labels.append("tumor-zeroed\n(eval)")
+        means.append(summary["tumor_masked_eval_macro_f1"])
     if labels:
         plot_metric_bars(
             labels, means, None, None,
             root / "figures" / "patient_vs_slice_macro_f1.png",
-            title="Paper A: patient-level vs leaky slice-level macro-F1",
+            title="Paper A: patient-level vs audits (macro-F1)",
             ylabel="macro-F1",
         )
 

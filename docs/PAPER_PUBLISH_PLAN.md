@@ -167,13 +167,15 @@ How much of the widely reported 98–99% accuracy on Figshare-style 2D brain-tum
 
 ### 5.8 Remaining Paper A work checklist
 
-- [ ] Evaluation script: predictions → all metrics + all figures  
-- [ ] 5-fold × ResNet-18 (and ResNet-50) on Kaggle with resume  
-- [ ] Slice-level leaky baseline (same architecture)  
-- [ ] Tumor-masked and near-duplicate audits  
-- [ ] Grad-CAM figures  
-- [ ] Aggregated `experiments/paper_a/REPORT.md` + `figures/`  
+- [x] Evaluation script: predictions → all metrics + all figures  
+- [x] 5-fold × ResNet-18 on Kaggle with resume (ResNet-50 optional)  
+- [x] Slice-level leaky baseline (same architecture)  
+- [x] Tumor-masked and near-duplicate audits  
+- [x] Grad-CAM figures  
+- [x] Aggregated `experiments/paper_a/REPORT.md` + `figures/`  
 - [ ] Draft Methods / Results / Discussion for Paper A  
+- [ ] Literature mini-table of prior Figshare split protocols  
+- [ ] Optional ResNet-50 / multi-seed sensitivity
 
 ---
 

@@ -1,0 +1,7 @@
+{
+  "protocol": "slice_level_random",
+  "n_train_slices": 2451,
+  "n_val_slices": 613,
+  "n_patients_in_both_splits": 199,
+  "frac_val_slices_from_shared_patients": 0.9902120717781403
+}

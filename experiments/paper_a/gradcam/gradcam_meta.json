@@ -1,0 +1,98 @@
+[
+  {
+    "true": "pituitary",
+    "pred": "pituitary",
+    "probs": {
+      "meningioma": 5.472435872511117e-12,
+      "glioma": 8.775780395344629e-14,
+      "pituitary": 1.0
+    },
+    "path": "experiments\\paper_a\\gradcam\\correct_0.png",
+    "tag": "correct",
+    "index": 243
+  },
+  {
+    "true": "meningioma",
+    "pred": "meningioma",
+    "probs": {
+      "meningioma": 0.98124760389328,
+      "glioma": 0.00042800925439223647,
+      "pituitary": 0.018324434757232666
+    },
+    "path": "experiments\\paper_a\\gradcam\\correct_1.png",
+    "tag": "correct",
+    "index": 48
+  },
+  {
+    "true": "glioma",
+    "pred": "glioma",
+    "probs": {
+      "meningioma": 3.5783725707005942e-06,
+      "glioma": 0.9999964237213135,
+      "pituitary": 3.919495483728497e-08
+    },
+    "path": "experiments\\paper_a\\gradcam\\correct_2.png",
+    "tag": "correct",
+    "index": 357
+  },
+  {
+    "true": "glioma",
+    "pred": "glioma",
+    "probs": {
+      "meningioma": 9.368299652123824e-05,
+      "glioma": 0.9999016523361206,
+      "pituitary": 4.638456175598549e-06
+    },
+    "path": "experiments\\paper_a\\gradcam\\correct_3.png",
+    "tag": "correct",
+    "index": 420
+  },
+  {
+    "true": "pituitary",
+    "pred": "meningioma",
+    "probs": {
+      "meningioma": 0.56899493932724,
+      "glioma": 0.07480259984731674,
+      "pituitary": 0.35620245337486267
+    },
+    "path": "experiments\\paper_a\\gradcam\\wrong_0.png",
+    "tag": "wrong",
+    "index": 174
+  },
+  {
+    "true": "meningioma",
+    "pred": "glioma",
+    "probs": {
+      "meningioma": 0.2609020173549652,
+      "glioma": 0.7388838529586792,
+      "pituitary": 0.00021409733744803816
+    },
+    "path": "experiments\\paper_a\\gradcam\\wrong_1.png",
+    "tag": "wrong",
+    "index": 95
+  },
+  {
+    "true": "meningioma",
+    "pred": "pituitary",
+    "probs": {
+      "meningioma": 0.11168648302555084,
+      "glioma": 0.00032717728754505515,
+      "pituitary": 0.8879863619804382
+    },
+    "path": "experiments\\paper_a\\gradcam\\wrong_2.png",
+    "tag": "wrong",
+    "index": 32
+  },
+  {
+    "true": "pituitary",
+    "pred": "glioma",
+    "probs": {
+      "meningioma": 0.15472550690174103,
+      "glioma": 0.7491130232810974,
+      "pituitary": 0.09616155177354813
+    },
+    "path": "experiments\\paper_a\\gradcam\\wrong_3.png",
+    "tag": "wrong",
+    "index": 173
+  }
+]

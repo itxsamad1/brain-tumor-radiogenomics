@@ -1,0 +1,21 @@
+{
+  "patient_level_resnet18": {
+    "n_folds": 5,
+    "macro_f1_mean": 0.9510810431390484,
+    "macro_f1_std": 0.013159031182280588,
+    "accuracy_mean": 0.9561975650201626,
+    "accuracy_std": 0.013265481479005792
+  },
+  "slice_level_leaky_macro_f1": 0.9784189128962248,
+  "slice_level_leaky_accuracy": 0.9804241435562806,
+  "leakage_stats": {
+    "protocol": "slice_level_random",
+    "n_train_slices": 2451,
+    "n_val_slices": 613,
+    "n_patients_in_both_splits": 199,
+    "frac_val_slices_from_shared_patients": 0.9902120717781403
+  },
+  "tumor_masked_eval_macro_f1": 0.8164088641513203,
+  "tumor_masked_eval_accuracy": 0.8560885608856088,
+  "tumor_masked_train_best_macro_f1": 0.9565426747711162
+}

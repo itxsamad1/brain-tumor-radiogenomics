@@ -50,6 +50,10 @@ experiments/**/runs/
 wandb/
 mlruns/
 
+# Kaggle output dumps (full working trees / large syncs)
+experiments/**/kaggle_full*/
+experiments/**/kaggle_*/brain-tumor-radiogenomics/
+
 # IDE / OS
 .idea/
 .vscode/

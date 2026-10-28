@@ -1,0 +1,7 @@
+{
+  "best_macro_f1": 0.9565426747711162,
+  "mode": "zero_tumor",
+  "protocol": "train_from_scratch_on_masked",
+  "fold": 1,
+  "epochs": 10
+}

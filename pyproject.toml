@@ -46,7 +46,12 @@ dev = [
   "ipykernel>=6.29",
 ]
 all = [
-  "btlab[torch,medical,radiomics,survival,tabular,dev]",
+  "btlab[torch,medical,radiomics,survival,tabular,dev,app]",
+]
+app = [
+    "pillow>=13.0.0",
+    "python-docx>=1.2.0",
+    "streamlit>=1.66.1",
 ]
 
 [project.scripts]
