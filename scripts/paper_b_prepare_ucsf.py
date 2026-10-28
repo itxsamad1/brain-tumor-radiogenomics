@@ -82,8 +82,14 @@ def main() -> int:
         "seed": args.seed,
     }
     (args.exp_dir / "ucsf_label_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    from btlab.data.overlap import build_ucsf_overlap_registry
+
+    reg = build_ucsf_overlap_registry(labels_path, args.out_dir / "ucsf_brats21_overlap.json")
+    summary["n_in_brats21"] = reg["n_in_brats21"]
+    (args.exp_dir / "ucsf_label_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     print(json.dumps(summary, indent=2))
-    print("Wrote", labels_path, folds_path)
+    print("Wrote", labels_path, folds_path, args.out_dir / "ucsf_brats21_overlap.json")
     return 0
 
 
