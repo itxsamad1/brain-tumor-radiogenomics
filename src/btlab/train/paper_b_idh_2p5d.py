@@ -262,17 +262,19 @@ def main() -> int:
         row = {"epoch": epoch, "train_loss": running / max(n, 1), **metrics}
         history.append(row)
         print(row)
+        # JSON-safe args (avoid pickling pathlib from another Python)
+        args_dump = {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()}
         if metrics["auroc"] is not None and metrics["auroc"] > best:
             best = metrics["auroc"]
             bad_epochs = 0
             torch.save(
-                {"model": model.state_dict(), "history": history, "best_auroc": best, "args": vars(args)},
+                {"model": model.state_dict(), "history": history, "best_auroc": best, "args": args_dump},
                 args.out_dir / "checkpoint_best.pt",
             )
         else:
             bad_epochs += 1
         torch.save(
-            {"model": model.state_dict(), "history": history, "epoch": epoch, "args": vars(args)},
+            {"model": model.state_dict(), "history": history, "epoch": epoch, "args": args_dump},
             args.out_dir / "checkpoint_last.pt",
         )
         (args.out_dir / "status.json").write_text(
