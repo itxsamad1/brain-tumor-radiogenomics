@@ -1,26 +1,39 @@
 # Paper B — Progress Report
 
-**Status:** Started (after Paper A push)  
+**Status:** In progress — fold-1 imaging baseline done; multi-fold + clinical fusion running on Kaggle  
 **Question:** Calibrated, overlap-safe IDH / 1p19q / grade prediction across cohorts
 
-## Done so far
+## Must-beat clinical baseline (UTSW, 5-fold)
 
-| Item | Status |
+| Model | AUROC (mean ± std) | Balanced acc |
+| --- | ---: | ---: |
+| Age + sex logistic regression | **0.875 ± 0.024** | 0.809 |
+
+## Imaging 2.5D ResNet-18 (UTSW 2D PNG mirror, patient-level)
+
+| Fold | Best AUROC | AUPRC | Bal. acc | vs age (0.875) |
+| --- | ---: | ---: | ---: | --- |
+| 1 (imaging-only) | **0.870** | 0.714 | 0.777 | −0.005 (does **not** beat age) |
+| 2–5 | pending | — | — | multi-fold + age/sex fusion on Kaggle |
+
+Fold-1 artifacts: `kaggle_idh_fold1/fold1_idh_2p5d/`
+
+## Interpretation so far
+
+Pure mid-volume 2.5D MRI is **not** enough on UTSW — age already carries most IDH signal. Next models must either (a) fuse clinical covariates, (b) use tumor-centered / 3D features, or (c) show value via calibration / external generalization beyond AUROC alone.
+
+## Done
+
+| Item | Path |
 | --- | --- |
-| Official UTSW clinical TSV (625 pts) | `data/raw/utsw-glioma/UTSW_Glioma_Metadata.tsv` |
-| Frozen patient folds (IDH-stratified) | `data/splits/utsw_paper_b_folds.csv` |
-| Age±sex logistic baseline | `experiments/paper_b/age_baseline/` |
-| Kaggle 2.5D IDH kernel | `kaggle/kernels/btlab-paper-b-idh` |
-
-## Label snapshot (UTSW)
-
-- IDH: ~176 mutant / ~446 wild-type / 3 missing  
-- 1p/19q: sparse outside IDH-mutant (task gated)  
-- Primary external role in final design; early GPU work uses UTSW for pipeline proof while UCSF-PDGM downloads
+| Official UTSW TSV (625 pts) | `data/raw/utsw-glioma/` |
+| Frozen IDH-stratified folds | `data/splits/utsw_paper_b_folds.csv` |
+| Age±sex LR | `experiments/paper_b/age_baseline/` |
+| Kaggle kernel | https://www.kaggle.com/code/itxsamad/btlab-paper-b-idh |
 
 ## Next
 
-1. Kaggle GPU fold runs (2.5D ResNet)  
-2. Official Aspera NIfTI + UCSF-PDGM packaging  
-3. Radiomics / TabPFN baselines; BraTS overlap map  
+1. Finish 5-fold imaging±clinical fusion on Kaggle  
+2. Radiomics + TabPFN/XGBoost baselines (CPU)  
+3. Official Aspera NIfTI + UCSF-PDGM development cohort  
 4. Lock `docs/analysis_plan.md` before external peeking  

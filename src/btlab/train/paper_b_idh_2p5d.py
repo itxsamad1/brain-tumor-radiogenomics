@@ -134,28 +134,49 @@ class UTSW2DPatientDataset(Dataset):
 
 
 class SlicePoolResNet(nn.Module):
-    def __init__(self, in_ch: int = 4, pretrained: bool = True):
+    def __init__(self, in_ch: int = 4, pretrained: bool = True, fuse_clinical: bool = False):
         super().__init__()
         weights = "DEFAULT" if pretrained else None
         m = models.resnet18(weights=weights)
         m.conv1 = nn.Conv2d(in_ch, 64, kernel_size=7, stride=2, padding=3, bias=False)
-        m.fc = nn.Linear(m.fc.in_features, 1)
+        feat_dim = m.fc.in_features
+        m.fc = nn.Identity()
         self.backbone = m
+        self.fuse_clinical = fuse_clinical
+        head_in = feat_dim + (2 if fuse_clinical else 0)
+        self.head = nn.Linear(head_in, 1)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, clinical: torch.Tensor | None = None) -> torch.Tensor:
         # x: B,S,C,H,W
         b, s, c, h, w = x.shape
-        logits = self.backbone(x.reshape(b * s, c, h, w)).reshape(b, s)
-        return logits.mean(dim=1)
+        feats = self.backbone(x.reshape(b * s, c, h, w)).reshape(b, s, -1).mean(dim=1)
+        if self.fuse_clinical:
+            if clinical is None:
+                raise ValueError("clinical features required when fuse_clinical=True")
+            feats = torch.cat([feats, clinical], dim=1)
+        return self.head(feats).squeeze(1)
+
+
+def _batch_clinical(pids: list[str], table: pd.DataFrame, device) -> torch.Tensor:
+    sub = table.set_index("patient_id")
+    rows = []
+    for pid in pids:
+        age = float(sub.loc[pid, "age"]) if pid in sub.index else 50.0
+        sex = float(sub.loc[pid, "sex_male"]) if pid in sub.index else 0.0
+        # crude age norm (~UTSW mean)
+        rows.append([(age - 50.0) / 15.0, sex])
+    return torch.tensor(rows, dtype=torch.float32, device=device)
 
 
 @torch.no_grad()
-def eval_loader(model, loader, device):
+def eval_loader(model, loader, device, table: pd.DataFrame | None = None, fuse: bool = False):
     model.eval()
     ys, ps = [], []
-    for x, y, _ in loader:
+    for batch in loader:
+        x, y, pids = batch
         x = x.to(device)
-        logit = model(x)
+        clin = _batch_clinical(list(pids), table, device) if fuse and table is not None else None
+        logit = model(x, clin) if fuse else model(x)
         prob = torch.sigmoid(logit).cpu().numpy()
         ys.append(y.numpy())
         ps.append(prob)
@@ -184,12 +205,16 @@ def main() -> int:
     p.add_argument("--lr", type=float, default=1e-4)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--cpu", action="store_true")
+    p.add_argument("--fuse-clinical", action="store_true", help="Late-fuse age+sex with imaging features")
+    p.add_argument("--patience", type=int, default=8, help="Early stop patience on val AUROC")
     args = p.parse_args()
 
     set_seed(args.seed)
     device = torch.device("cpu" if args.cpu or not torch.cuda.is_available() else "cuda")
     df = pd.read_csv(args.folds).dropna(subset=["idh"])
     df["idh"] = df["idh"].astype(int)
+    df["age"] = pd.to_numeric(df["age"], errors="coerce").fillna(50.0)
+    df["sex_male"] = pd.to_numeric(df.get("sex_male", 0), errors="coerce").fillna(0).astype(int)
     train_df = df[df["fold"] != args.fold].reset_index(drop=True)
     val_df = df[df["fold"] == args.fold].reset_index(drop=True)
 
@@ -207,7 +232,7 @@ def main() -> int:
         num_workers=2,
     )
 
-    model = SlicePoolResNet(in_ch=4, pretrained=True).to(device)
+    model = SlicePoolResNet(in_ch=4, pretrained=True, fuse_clinical=args.fuse_clinical).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     # class imbalance
     n_pos = max(1, int((train_df["idh"] == 1).sum()))
@@ -218,28 +243,34 @@ def main() -> int:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     history = []
     best = -1.0
+    bad_epochs = 0
     for epoch in range(args.epochs):
         model.train()
         running, n = 0.0, 0
-        for x, y, _ in tqdm(train_loader, desc=f"fold{args.fold} ep{epoch+1}"):
+        for x, y, pids in tqdm(train_loader, desc=f"fold{args.fold} ep{epoch+1}"):
             x = x.to(device)
             y = y.float().to(device)
+            clin = _batch_clinical(list(pids), df, device) if args.fuse_clinical else None
             opt.zero_grad(set_to_none=True)
-            loss = criterion(model(x), y)
+            logit = model(x, clin) if args.fuse_clinical else model(x)
+            loss = criterion(logit, y)
             loss.backward()
             opt.step()
             running += loss.item() * len(y)
             n += len(y)
-        metrics = eval_loader(model, val_loader, device)
+        metrics = eval_loader(model, val_loader, device, table=df, fuse=args.fuse_clinical)
         row = {"epoch": epoch, "train_loss": running / max(n, 1), **metrics}
         history.append(row)
         print(row)
         if metrics["auroc"] is not None and metrics["auroc"] > best:
             best = metrics["auroc"]
+            bad_epochs = 0
             torch.save(
                 {"model": model.state_dict(), "history": history, "best_auroc": best, "args": vars(args)},
                 args.out_dir / "checkpoint_best.pt",
             )
+        else:
+            bad_epochs += 1
         torch.save(
             {"model": model.state_dict(), "history": history, "epoch": epoch, "args": vars(args)},
             args.out_dir / "checkpoint_last.pt",
@@ -248,6 +279,9 @@ def main() -> int:
             json.dumps({"epoch": epoch, "best_auroc": best, **metrics}, indent=2),
             encoding="utf-8",
         )
+        if bad_epochs >= args.patience:
+            print(f"early stop at epoch {epoch}, best_auroc={best}")
+            break
     (args.out_dir / "history.json").write_text(json.dumps(history, indent=2), encoding="utf-8")
     print("best_auroc", best)
     return 0
