@@ -1,0 +1,12 @@
+{
+  "model": "logistic_regression",
+  "features": [
+    "age",
+    "sex_male"
+  ],
+  "n_folds": 5,
+  "auroc_mean": 0.9039475210970466,
+  "auroc_std": 0.024986744993402355,
+  "balanced_accuracy_mean": 0.8504498191681737,
+  "auprc_mean": 0.7434047931561937
+}

@@ -1,0 +1,9 @@
+{
+  "n_patients": 501,
+  "n_idh_labeled": 501,
+  "idh_mutant": 103,
+  "idh_wildtype": 398,
+  "n_in_brats21": 298,
+  "source": "UCSF-PDGM metadata (cite TCIA DOI 10.7937/tcia.bdgf-8v37)",
+  "seed": 42
+}
