@@ -26,21 +26,23 @@ Source: `ucsf_radiomics_summary.json` / `ucsf_radiomics_features.csv` (87 featur
 
 BraTS21 overlap among UCSF labels: **298/501** (`data/splits/ucsf_brats21_overlap.json`).
 
-## Exploratory UTSW 2.5D (not confirmatory)
+## Exploratory UTSW (not confirmatory external)
 
-| Metric | Value |
-| --- | ---: |
-| 5-fold mean AUROC | 0.854 ± 0.030 |
-| Age+sex LR (UTSW) | 0.875 ± 0.024 |
+| Model | AUROC | vs UTSW age (0.875) |
+| --- | ---: | --- |
+| 2.5D mid-slice ResNet | 0.854 ± 0.030 | does not beat |
+| Radiomics LR | see `utsw_radiomics_summary.json` | exploratory only |
+| Radiomics + clinical | see `utsw_radiomics_summary.json` | exploratory only |
 
-## In progress on Kaggle
+These UTSW imaging runs are **pipeline validation / exploratory**. Confirmatory external = one frozen UCSF model evaluated once.
 
-- Tumor-centered crops: https://www.kaggle.com/code/itxsamad/btlab-paper-b-crops  
-- Exploratory UTSW radiomics: https://www.kaggle.com/code/itxsamad/btlab-paper-b-radiomics-utsw  
+## UCSF crops
+
+- 495 patients, 96³ float16 multi-modal crops (`btlab-paper-b-crops` COMPLETE)
+- Next: GPU crop-CNN 5-fold (`btlab-paper-b-crop-cnn`)
 
 ## Next (protocol order)
 
-1. Finish UCSF crops → train crop 3D CNN ± clinical (must appear in table)  
-2. Optional: richer radiomics / full 4-modality on larger UCSF mirror  
-3. Git tag `paper-b-external-freeze` with frozen UCSF model  
-4. **Single** confirmatory UTSW external evaluation (no further tuning)  
+1. Train UCSF crop 3D CNN ± clinical (must-beat table row)  
+2. Git tag `paper-b-external-freeze` with frozen UCSF-selected model  
+3. **Single** confirmatory UTSW external evaluation (no further tuning)  

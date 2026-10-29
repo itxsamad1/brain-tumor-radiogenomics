@@ -1,0 +1,19 @@
+{
+  "id": "itxsamad/btlab-paper-b-crop-cnn",
+  "title": "btlab-paper-b-crop-cnn",
+  "code_file": "btlab-paper-b-crop-cnn.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "itxsamad/btlab-paper-b-splits"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [
+    "itxsamad/btlab-paper-b-crops"
+  ],
+  "model_sources": []
+}
