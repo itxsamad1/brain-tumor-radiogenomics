@@ -4,7 +4,14 @@ from __future__ import annotations
 
 import numpy as np
 
+from btlab.data.nifti_cohorts import _ucsf_id_variants
 from btlab.radiomics.features import first_order, shape_features, tumor_centered_crop
+
+
+def test_ucsf_id_zero_padding_variants():
+    variants = _ucsf_id_variants("UCSF-PDGM-004")
+    assert "UCSF-PDGM-004" in variants
+    assert "UCSF-PDGM-0004" in variants
 
 
 def test_shape_and_first_order_nonzero():

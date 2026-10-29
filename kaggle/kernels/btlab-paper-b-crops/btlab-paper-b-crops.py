@@ -19,7 +19,14 @@ REPO_DIR = Path("/kaggle/working/brain-tumor-radiogenomics")
 
 def find_data_root(cohort: str) -> Path:
     root = Path("/kaggle/input")
+    print("input tree (depth2):")
+    for p in sorted(root.rglob("*"))[:80]:
+        if len(p.relative_to(root).parts) <= 2:
+            print(" ", p)
     if cohort == "ucsf":
+        for hit in root.rglob("UCSF-PDGM-0004_nifti"):
+            if hit.is_dir():
+                return hit.parent
         for hit in root.rglob("*UCSF-PDGM-0004*"):
             if hit.is_dir():
                 return hit.parent

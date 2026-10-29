@@ -18,15 +18,19 @@ REPO_DIR = Path("/kaggle/working/brain-tumor-radiogenomics")
 
 def find_data_root(cohort: str) -> Path:
     root = Path("/kaggle/input")
+    print("input tree (depth2):")
+    for p in sorted(root.rglob("*"))[:80]:
+        if len(p.relative_to(root).parts) <= 2:
+            print(" ", p)
+
     if cohort == "ucsf":
-        for hit in root.rglob("*UCSF-PDGM-0004*"):
-            # expect .../UCSF-PDGM/UCSF-PDGM-0004_nifti → cohort root = parent of patient dir's parent or parent
+        # Prefer folder that directly contains patient *_nifti dirs
+        for hit in root.rglob("UCSF-PDGM-0004_nifti"):
             if hit.is_dir():
-                # prefer directory that contains many patient folders
-                parent = hit.parent
-                if parent.name.lower().startswith("ucsf") or any(parent.glob("*UCSF-PDGM*")):
-                    return parent
-                return parent
+                return hit.parent
+        for hit in root.rglob("*UCSF-PDGM-0004*"):
+            if hit.is_dir():
+                return hit.parent
         for hit in root.rglob("UCSF-PDGM-metadata.csv"):
             return hit.parent
     else:
@@ -59,7 +63,8 @@ def main() -> None:
     else:
         subprocess.check_call(["git", "-C", str(REPO_DIR), "pull", "--ff-only"])
     os.chdir(REPO_DIR)
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "-e", ".[medical]"])
+    # Keep deps light — full medical extra (MONAI/SimpleITK) is unnecessary here
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "-e", "."])
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "nibabel", "xgboost"])
 
     data_root = find_data_root(cohort)

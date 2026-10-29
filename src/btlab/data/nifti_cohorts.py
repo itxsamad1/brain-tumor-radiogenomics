@@ -51,19 +51,67 @@ def resolve_utsw_case(root: Path, patient_id: str) -> dict[str, Path] | None:
     return out
 
 
+def _ucsf_id_variants(patient_id: str) -> list[str]:
+    """Metadata uses UCSF-PDGM-004; Kaggle folders often use UCSF-PDGM-0004."""
+    pid = str(patient_id).strip()
+    out = [pid]
+    if "-" in pid:
+        prefix, _, suffix = pid.rpartition("-")
+        if suffix.isdigit():
+            n = int(suffix)
+            for width in (3, 4, 5):
+                out.append(f"{prefix}-{n:0{width}d}")
+    # unique, preserve order
+    seen: set[str] = set()
+    uniq: list[str] = []
+    for x in out:
+        if x not in seen:
+            seen.add(x)
+            uniq.append(x)
+    return uniq
+
+
 def find_ucsf_patient_dir(root: Path, patient_id: str) -> Path | None:
-    # layouts seen on Kaggle mirrors
-    for cand in [
-        root / "UCSF-PDGM" / f"{patient_id}_nifti",
-        root / f"{patient_id}_nifti",
-        root / patient_id,
-    ]:
-        if cand.is_dir():
-            return cand
-    hits = [p for p in root.rglob(f"*{patient_id}*") if p.is_dir()]
-    for h in hits:
-        if any(h.rglob("*.nii*")):
-            return h
+    # layouts seen on Kaggle mirrors (zero-padding differs from metadata IDs)
+    for pid in _ucsf_id_variants(patient_id):
+        for cand in [
+            root / "UCSF-PDGM" / f"{pid}_nifti",
+            root / f"{pid}_nifti",
+            root / pid,
+        ]:
+            if cand.is_dir():
+                return cand
+    for pid in _ucsf_id_variants(patient_id):
+        hits = [p for p in root.rglob(f"*{pid}*") if p.is_dir()]
+        for h in hits:
+            if any(p.is_file() and ".nii" in p.name.lower() for p in h.rglob("*")):
+                return h
+    return None
+
+
+def _first_nifti_file(
+    root: Path,
+    patterns: list[str],
+    *,
+    exclude_substrings: list[str] | None = None,
+) -> Path | None:
+    """Kaggle UCSF mirrors often nest files as ``name.nii/name.nii`` directories."""
+    exclude = [e.lower() for e in (exclude_substrings or [])]
+
+    def _ok(name: str) -> bool:
+        low = name.lower()
+        if ".nii" not in low:
+            return False
+        return not any(e in low for e in exclude)
+
+    for pat in patterns:
+        for hit in root.rglob(pat):
+            if hit.is_file() and _ok(hit.name):
+                return hit
+            if hit.is_dir() and _ok(hit.name):
+                nested = [p for p in hit.rglob("*") if p.is_file() and _ok(p.name)]
+                if nested:
+                    return nested[0]
     return None
 
 
@@ -72,20 +120,17 @@ def resolve_ucsf_case(root: Path, patient_id: str) -> dict[str, Path] | None:
     if pdir is None:
         return None
 
-    def find_one(patterns: list[str]) -> Path | None:
-        for pat in patterns:
-            hits = list(pdir.rglob(pat))
-            if hits:
-                return hits[0]
-        return None
-
     images = {
-        "t1c": find_one(["*T1c*.nii*", "*T1gad*.nii*", "*t1ce*.nii*"]),
-        "flair": find_one(["*FLAIR*.nii*", "*flair*.nii*"]),
-        "t2": find_one(["*T2*.nii*", "*t2*.nii*"]),
-        "t1": find_one(["*T1_bias*.nii*", "*T1w*.nii*", "*t1.nii*"]),
+        "t1c": _first_nifti_file(pdir, ["*T1c*", "*T1gad*", "*t1ce*"]),
+        "flair": _first_nifti_file(pdir, ["*FLAIR*", "*flair*"]),
+        "t2": _first_nifti_file(pdir, ["*T2*", "*t2*"], exclude_substrings=["t1", "flair"]),
+        "t1": _first_nifti_file(
+            pdir,
+            ["*T1_bias*", "*T1w*", "*T1n*", "*T1*"],
+            exclude_substrings=["t1c", "t1gad", "t1ce", "flair", "t2"],
+        ),
     }
-    mask = find_one(["*tumor_segmentation*.nii*", "*seg*.nii*"])
+    mask = _first_nifti_file(pdir, ["*tumor_segmentation*", "*seg*"])
     if mask is None or images["t1c"] is None:
         return None
     out = {k: v for k, v in images.items() if v is not None}
