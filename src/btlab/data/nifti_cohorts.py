@@ -76,6 +76,7 @@ def find_ucsf_patient_dir(root: Path, patient_id: str) -> Path | None:
     for pid in _ucsf_id_variants(patient_id):
         for cand in [
             root / "UCSF-PDGM" / f"{pid}_nifti",
+            root / "ucsf" / f"{pid}_nifti",
             root / f"{pid}_nifti",
             root / pid,
         ]:
