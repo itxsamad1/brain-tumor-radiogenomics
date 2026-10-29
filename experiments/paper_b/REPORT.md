@@ -28,13 +28,15 @@ BraTS21 overlap among UCSF labels: **298/501** (`data/splits/ucsf_brats21_overla
 
 ## Exploratory UTSW (not confirmatory external)
 
-| Model | AUROC | vs UTSW age (0.875) |
-| --- | ---: | --- |
-| 2.5D mid-slice ResNet | 0.854 ± 0.030 | does not beat |
-| Radiomics LR | see `utsw_radiomics_summary.json` | exploratory only |
-| Radiomics + clinical | see `utsw_radiomics_summary.json` | exploratory only |
+| Model | AUROC mean ± std | Δ vs age (0.875) |
+| --- | ---: | ---: |
+| 2.5D mid-slice ResNet | 0.854 ± 0.030 | −0.021 |
+| Radiomics LR | **0.905 ± 0.012** | +0.031 |
+| Radiomics + clinical LR | **0.927 ± 0.013** | +0.052 |
+| Radiomics + clinical XGB | **0.943 ± 0.020** | +0.068 |
 
-These UTSW imaging runs are **pipeline validation / exploratory**. Confirmatory external = one frozen UCSF model evaluated once.
+622 patients; `utsw_radiomics_summary.json`.  
+These runs are **pipeline validation / exploratory**. Confirmatory external = one frozen UCSF model evaluated once.
 
 ## UCSF crops
 
