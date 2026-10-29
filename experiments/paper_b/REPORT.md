@@ -1,49 +1,46 @@
 # Paper B — Progress Report
 
-**Status:** Analysis plan **locked** for confirmatory claims; UCSF development radiomics + crops running on Kaggle  
-**Question:** Calibrated, overlap-safe IDH / 1p19q / grade prediction across cohorts
+**Status:** UCSF development radiomics must-beat table **complete**; crops + UTSW exploratory radiomics still running  
+**Plan:** [`docs/analysis_plan.md`](../../docs/analysis_plan.md) (locked confirmatory protocol)
 
-Plan: [`docs/analysis_plan.md`](../../docs/analysis_plan.md)
-
-## Scientific protocol (correct roles)
+## Scientific roles (correct)
 
 | Role | Cohort | Status |
 | --- | --- | --- |
-| Development CV | **UCSF-PDGM** | Labels + BraTS overlap registry ready; radiomics/crops kernels launched |
-| Primary external (once) | **UTSW-Glioma** | Labels ready; **not** used for confirmatory eval until UCSF model freeze |
-| Exploratory only | UTSW 2.5D PNG ResNet | Done — mean AUROC **0.854** vs age **0.875** (does **not** beat age) |
+| Development CV | **UCSF-PDGM** | Radiomics table done (495 pts) |
+| Primary external (once) | **UTSW-Glioma** | Labels ready; confirmatory run **not** started |
+| Exploratory only | UTSW 2.5D PNG ResNet | Mean AUROC 0.854 < age 0.875 |
 
-Do **not** rebrand exploratory UTSW 2.5D numbers as the locked external result.
+## UCSF development — IDH must-beat table (patient-level 5-fold)
 
-## Clinical must-beat baselines (age + sex LR)
+Source: `ucsf_radiomics_summary.json` / `ucsf_radiomics_features.csv` (87 features; T1c+FLAIR + shape)
 
-| Cohort | n IDH | AUROC mean ± std | Bal. acc |
-| --- | ---: | ---: | ---: |
-| UTSW | 622 | **0.875 ± 0.024** | 0.809 |
-| UCSF | 501 (103 mut / 398 wt) | **0.904 ± 0.025** | 0.850 |
+| Model | AUROC mean ± std | AUPRC | Bal. acc | ΔAUROC vs age | Beats age? |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Age + sex LR | **0.905 ± 0.025** | 0.747 | 0.851 | 0 | — |
+| Radiomics LR | **0.954 ± 0.017** | 0.874 | 0.883 | **+0.049** | yes |
+| Radiomics + clinical LR | **0.969 ± 0.013** | 0.919 | 0.908 | **+0.064** | yes |
+| Radiomics + clinical XGB | **0.965 ± 0.009** | 0.922 | 0.879 | **+0.060** | yes |
 
-UCSF BraTS21 overlap: **298 / 501** (`data/splits/ucsf_brats21_overlap.json`).
+**Selected development baseline (for later external freeze):** radiomics + clinical LR (highest mean AUROC).
 
-## Exploratory imaging (UTSW 2.5D) — pipeline validation only
+BraTS21 overlap among UCSF labels: **298/501** (`data/splits/ucsf_brats21_overlap.json`).
 
-| Fold | Best AUROC |
+## Exploratory UTSW 2.5D (not confirmatory)
+
+| Metric | Value |
 | --- | ---: |
-| 1–5 mean | **0.854 ± 0.030** |
+| 5-fold mean AUROC | 0.854 ± 0.030 |
+| Age+sex LR (UTSW) | 0.875 ± 0.024 |
 
-## Confirmatory stack (in progress)
+## In progress on Kaggle
 
-1. **Radiomics must-beat table** on UCSF (age LR vs radiomics LR vs radiomics+clinical LR/XGB) — Kaggle: `btlab-paper-b-radiomics`  
-2. **Tumor-centered float16 crops** on UCSF — Kaggle: `btlab-paper-b-crops`  
-3. Crop CNN ± clinical fusion on UCSF CV  
-4. Git tag `paper-b-external-freeze` → **single** UTSW external run  
+- Tumor-centered crops: https://www.kaggle.com/code/itxsamad/btlab-paper-b-crops  
+- Exploratory UTSW radiomics: https://www.kaggle.com/code/itxsamad/btlab-paper-b-radiomics-utsw  
 
-## Code map
+## Next (protocol order)
 
-| Path | Purpose |
-| --- | --- |
-| `src/btlab/radiomics/features.py` | Shape + first-order radiomics; tumor crops |
-| `src/btlab/data/nifti_cohorts.py` | UTSW/UCSF NIfTI path resolvers |
-| `src/btlab/data/overlap.py` | BraTS overlap registry helper |
-| `scripts/paper_b_radiomics_baseline.py` | Honest CV must-beat table |
-| `scripts/paper_b_make_crops.py` | Crop export |
-| `docs/analysis_plan.md` | Locked confirmatory protocol |
+1. Finish UCSF crops → train crop 3D CNN ± clinical (must appear in table)  
+2. Optional: richer radiomics / full 4-modality on larger UCSF mirror  
+3. Git tag `paper-b-external-freeze` with frozen UCSF model  
+4. **Single** confirmatory UTSW external evaluation (no further tuning)  
